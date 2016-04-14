@@ -56,7 +56,7 @@ function formatMatch (item, cb) {
  */
 function getId (match, round, year, cb) {
   var prefix = 'R'
-  if (Number.isInteger(match)) {
+  if (typeof match === 'number' && (match % 1) === 0) {
     prefix = 'M'
     match = leftpad(match, 2, 0)
   } else {
