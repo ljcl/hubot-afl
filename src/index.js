@@ -5,8 +5,6 @@ var moment = require('moment-timezone')
 var leftpad = require('left-pad')
 var _ = require('lodash')
 
-// process.env.AFLTOKEN = '76c2c13bdb0e1a84a36fecfb4d27b9de'
-
 // We need a token to use the AFL API.
 if (typeof process.env.AFLTOKEN === 'undefined') {
   request({method: 'POST', url: 'http://api.afl.com.au/cfs/afl/WMCTok'}, function (error, response, body) {
