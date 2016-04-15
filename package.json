@@ -1,6 +1,6 @@
 {
   "name": "hubot-afl",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Get AFL scores from your hubot",
   "main": "dist/index.js",
   "license": "MIT",
