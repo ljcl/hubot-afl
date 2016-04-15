@@ -13,8 +13,8 @@
     "hubot-script"
   ],
   "scripts": {
-    "build": "webpack --progress --colors && cat src/header.js tmp/index.js > dist/index.js",
-    "prepublish": "webpack && cat src/header.js tmp/index.js > dist/index.js",
+    "build": "webpack --progress --colors",
+    "prepublish": "webpack",
     "test": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec --compilers js:babel-core/register,coffee:coffee-script/register",
     "coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },

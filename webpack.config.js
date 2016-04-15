@@ -2,7 +2,7 @@
 module.exports = {
   entry: './src/index.js',
   output: {
-    path: 'tmp',
+    path: 'dist',
     filename: 'index.js',
     libraryTarget: 'commonjs2'
   },
