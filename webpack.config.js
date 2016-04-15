@@ -1,16 +1,12 @@
 'use strict'
-
 module.exports = {
   entry: './src/index.js',
-
   output: {
     path: 'dist',
     filename: 'index.js',
     libraryTarget: 'commonjs2'
   },
-
   target: 'node',
-
   module: {
     noParse: /node_modules\/json-schema\/lib\/validate\.js/,
     loaders: [
@@ -23,5 +19,4 @@ module.exports = {
       }
     ]
   }
-
 }
