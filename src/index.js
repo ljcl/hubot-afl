@@ -11,10 +11,7 @@ if (typeof process.env.AFLTOKEN === 'undefined') {
     if (error) throw new Error(error)
     var data = JSON.parse(body)
     process.env.AFLTOKEN = data.token
-    console.log('GOT TOKEN: ', process.env.AFLTOKEN)
   })
-} else {
-  console.log('got a token already dawg! ', process.env.AFLTOKEN)
 }
 
 function formatMatch (item, cb) {
@@ -55,6 +52,8 @@ function formatMatch (item, cb) {
  * @param  {function} cb
  */
 function getId (match, round, year, cb) {
+  var result = {}
+  result.number = round
   var prefix = 'R'
   if (typeof match === 'number' && (match % 1) === 0) {
     prefix = 'M'
@@ -63,9 +62,10 @@ function getId (match, round, year, cb) {
     match = ''
   }
   year = (!moment(year, 'YYYY', true).isValid() ? moment().year() : year)
-  var itemId = 'CD_' + prefix + year + '014' + leftpad(round, 2, 0) + match
+  result.year = year
+  result.id = 'CD_' + prefix + year + '014' + leftpad(round, 2, 0) + match
   // e.g: CD_R201501401
-  cb(itemId)
+  cb(result)
 }
 
 module.exports = (robot) => {
@@ -74,8 +74,8 @@ module.exports = (robot) => {
     var year = (typeof res.match[4] !== 'undefined' ? res.match[4] : '')
     getId(false, round, year, function (round) {
       var optionsRound = {
-        url: 'http://api.afl.com.au/cfs/afl/matchItems/round/' + round,
-        headers: {'x-media-mis-token': process.env.AFLTOKEN}
+        url: 'http://api.afl.com.au/cfs/afl/matchItems/round/' + round.id,
+        headers: {'x-media-mis-token': 'b28d4abb7655fbfd7bf1d400575e6bc7'}
       }
       request(optionsRound, function (error, response, body) {
         if (error) throw new Error(error)
@@ -83,7 +83,7 @@ module.exports = (robot) => {
           var json = JSON.parse(body)
           var count = 0
           var total = json.items.length
-          var message = ''
+          var message = 'Here\'s round ' + round.number + ' (' + round.year + ')/n'
           _.forEach(json.items, function (match) {
             formatMatch(match, function (err, result) {
               if (err) throw err
