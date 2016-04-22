@@ -5,14 +5,49 @@ var moment = require('moment-timezone')
 var leftpad = require('left-pad')
 var _ = require('lodash')
 
-// We need a token to use the AFL API.
-if (typeof process.env.AFLTOKEN === 'undefined') {
+var tokenRetrieved
+var tokenRefresh
+var aflToken
+
+function getToken (cb) {
+  if (typeof tokenRetrieved !== 'undefined') {
+    // There is a token, check date
+    if (tokenRetrieved.isAfter(tokenRefresh)) {
+      // Get a new token
+      newToken(function (err, token) {
+        if (err) throw new Error(err)
+        aflToken = token
+        cb(false, aflToken)
+      })
+    } else {
+      cb(false, aflToken)
+    }
+  } else {
+    newToken(function (err, token) {
+      if (err) throw new Error(err)
+      aflToken = token
+      cb(false, aflToken)
+    })
+  }
+}
+
+function newToken (cb) {
+  tokenRetrieved = moment()
+  tokenRefresh = tokenRetrieved.add(1, 'days')
   request({method: 'POST', url: 'http://api.afl.com.au/cfs/afl/WMCTok'}, function (error, response, body) {
     if (error) throw new Error(error)
     var data = JSON.parse(body)
-    process.env.AFLTOKEN = data.token
+    cb(false, data.token)
   })
 }
+// We need a token to use the AFL API.
+// if (typeof process.env.AFLTOKEN === 'undefined') {
+//   request({method: 'POST', url: 'http://api.afl.com.au/cfs/afl/WMCTok'}, function (error, response, body) {
+//     if (error) throw new Error(error)
+//     var data = JSON.parse(body)
+//     process.env.AFLTOKEN = data.token
+//   })
+// }
 
 function formatMatch (item, cb) {
   var match
@@ -73,36 +108,40 @@ module.exports = (robot) => {
     var round = res.match[3].replace(/\?/g, '')
     var year = (typeof res.match[4] !== 'undefined' ? res.match[4] : '')
     getId(false, round, year, function (round) {
-      var optionsRound = {
-        url: 'http://api.afl.com.au/cfs/afl/matchItems/round/' + round.id,
-        headers: {'x-media-mis-token': 'b28d4abb7655fbfd7bf1d400575e6bc7'}
-      }
-      request(optionsRound, function (error, response, body) {
-        if (error) throw new Error(error)
-        if (response.statusCode === 200) {
-          var json = JSON.parse(body)
-          var count = 0
-          var total = json.items.length
-          var message = 'Here\'s round ' + round.number + ' (' + round.year + ')/n'
-          _.forEach(json.items, function (match) {
-            formatMatch(match, function (err, result) {
-              if (err) throw err
-              message += result
-              count++
-            })
-            if (count === total) {
-              res.send(message)
-            } else {
-               message += '\n'
-            }
-          })
-        } else if (response.statusCode === 404) {
-          res.send('You probably did something wrong (' + response.statusCode + ' ' + response.statusMessage + ')')
-        } else {
-          res.send('We probably did something wrong (' + response.statusCode + ' ' + response.statusMessage + ')')
-          console.warn('This token may not be valid: ', process.env.AFLTOKEN)
-          console.warn(body)
+      getToken(function (err, token) {
+        if (err) throw new Error(err)
+        console.log('yay', token)
+        var optionsRound = {
+          url: 'http://api.afl.com.au/cfs/afl/matchItems/round/' + round.id,
+          headers: {'x-media-mis-token': aflToken}
         }
+        request(optionsRound, function (error, response, body) {
+          if (error) throw new Error(error)
+          if (response.statusCode === 200) {
+            var json = JSON.parse(body)
+            var count = 0
+            var total = json.items.length
+            var message = 'Here\'s round ' + round.number + ' (' + round.year + ')/n'
+            _.forEach(json.items, function (match) {
+              formatMatch(match, function (err, result) {
+                if (err) throw err
+                message += result
+                count++
+              })
+              if (count === total) {
+                res.send(message)
+              } else {
+                 message += '\n'
+              }
+            })
+          } else if (response.statusCode === 404) {
+            res.send('You probably did something wrong (' + response.statusCode + ' ' + response.statusMessage + ')')
+          } else {
+            res.send('We probably did something wrong (' + response.statusCode + ' ' + response.statusMessage + ')')
+            console.warn('This token may not be valid: ', aflToken)
+            console.warn(body)
+          }
+        })
       })
     })
   })

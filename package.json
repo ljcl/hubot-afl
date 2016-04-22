@@ -19,7 +19,7 @@
     "coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "devDependencies": {
-    "babel-core": "^6.2.1",
+    "babel-core": "^6.7.7",
     "babel-loader": "^6.2.0",
     "babel-preset-es2015": "^6.1.18",
     "chai": "^3.4.1",
@@ -31,13 +31,13 @@
     "istanbul": "^1.0.0-alpha.2",
     "json-loader": "^0.5.4",
     "mocha": "^2.3.4",
-    "webpack": "^1.12.9"
+    "webpack": "^1.13.0"
   },
   "dependencies": {
     "left-pad": "^1.0.2",
     "lodash": "^4.11.1",
     "moment-timezone": "^0.5.3",
-    "request": "^2.69.0",
+    "request": "^2.72.0",
     "xml2json": "^0.9.0"
   }
 }
