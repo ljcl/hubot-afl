@@ -121,7 +121,7 @@ module.exports = (robot) => {
             var json = JSON.parse(body)
             var count = 0
             var total = json.items.length
-            var message = 'Here\'s round ' + round.number + ' (' + round.year + ')/n'
+            var message = 'Here\'s round ' + round.number + ' (' + round.year + ')\n'
             _.forEach(json.items, function (match) {
               formatMatch(match, function (err, result) {
                 if (err) throw err
