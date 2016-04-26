@@ -33,9 +33,18 @@ describe('hubot', function () {
     robot.shutdown()
   })
 
+  it('Return information about the current AFL Round', (done) => {
+    robot.adapter.on('send', (envelope, strings) => {
+      expect(strings[0]).to.match(/AFL round/i)
+      done()
+    })
+    // Send a message to Hubot
+    robot.adapter.receive(new TextMessage(user, 'show me the current afl round'))
+  })
+
   it('Return information about an AFL season from the current year', (done) => {
     robot.adapter.on('send', (envelope, strings) => {
-      expect(strings[0]).to.match(/Here\'s round/i)
+      expect(strings[0]).to.match(/AFL round/i)
       done()
     })
     // Send a message to Hubot
@@ -46,7 +55,7 @@ describe('hubot', function () {
     var lastYear = moment().subtract(1, 'years').format('Y')
 
     robot.adapter.on('send', (envelope, strings) => {
-      expect(strings[0]).to.match(/Here\'s round/i)
+      expect(strings[0]).to.match(/AFL round/i)
       done()
     })
 
@@ -58,7 +67,7 @@ describe('hubot', function () {
     var nextYear = moment().add(1, 'years').format('Y')
 
     robot.adapter.on('send', (envelope, strings) => {
-      expect(strings[0]).to.match(/Here\'s round/i)
+      expect(strings[0]).to.match(/AFL round/i)
       done()
     })
 
