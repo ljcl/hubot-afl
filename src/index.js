@@ -12,7 +12,7 @@ var aflToken
 function getToken (cb) {
   if (typeof tokenRetrieved !== 'undefined') {
     // There is a token, check date
-    if (tokenRetrieved.isSameOrAfter(tokenRefresh, 'day')) {
+    if (tokenRetrieved.isSameOrAfter(tokenRefresh, 'hour')) {
       // Get a new token
       newToken(function (err, token) {
         if (err) throw new Error(err)
@@ -33,7 +33,7 @@ function getToken (cb) {
 
 function newToken (cb) {
   tokenRetrieved = moment()
-  tokenRefresh = moment().add(1, 'days')
+  tokenRefresh = moment().add(6, 'hours')
   request({method: 'POST', url: 'http://api.afl.com.au/cfs/afl/WMCTok'}, function (error, response, body) {
     if (error) throw new Error(error)
     var data = JSON.parse(body)
