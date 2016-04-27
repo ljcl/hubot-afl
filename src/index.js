@@ -148,9 +148,9 @@ function printRound (round, cb) {
 
 module.exports = (robot) => {
   robot.hear(/afl$/i, (res) => {
-    var message = `I can help you out with afl scores!
-    "show me the current afl round" - Get fixtures/ scores of the latest round.
-    "show me afl round 27 2012" - Show fixtures for a specific round (year optional)`
+    var message = `I can help you out with afl scores:
+"show me the current afl round" - Get fixtures/ scores of the latest round.
+"show me afl round 27 2012" - Show fixtures for a specific round (year optional)`
     res.send(message)
   })
   robot.hear(/(show me the)?\s?(current)\s?(afl)\s?\s?(round)?/i, (res) => {
