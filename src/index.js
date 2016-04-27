@@ -9,6 +9,10 @@ var tokenRetrieved
 var tokenRefresh
 var aflToken
 
+/**
+ * Determine if a token needs to be fetched or returned.
+ * @param  {Function} cb
+ */
 function getToken (cb) {
   if (typeof tokenRetrieved !== 'undefined') {
     // There is a token, check date
@@ -31,6 +35,10 @@ function getToken (cb) {
   }
 }
 
+/**
+ * Fetch a new token and set new timers for refreshing.
+ * @param  {Function} cb
+ */
 function newToken (cb) {
   tokenRetrieved = moment()
   tokenRefresh = moment().add(6, 'hours')
@@ -41,6 +49,11 @@ function newToken (cb) {
   })
 }
 
+/**
+ * Format a single match into an appropriate string.
+ * @param  {object}   item Match information including scores, play status
+ * @param  {Function} cb
+ */
 function formatMatch (item, cb) {
   var match
   var status = item.match.status
@@ -128,6 +141,11 @@ function getCurrentRound (cb) {
   })
 }
 
+/**
+ * Builds up a message string to send.
+ * @param  {object}   round A round object which needs to contain a round number, year, and array of matches.
+ * @param  {Function} cb
+ */
 function printRound (round, cb) {
   var count = 0
   var total = round.items.length
