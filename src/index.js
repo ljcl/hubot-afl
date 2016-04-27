@@ -80,7 +80,7 @@ function formatMatch (item, cb) {
     match = item.match.name + ' - ' + date + ' ' + item.venue.name
   }
   if (status === 'LIVE') {
-    // Return a stream URL
+    match = '*LIVE:* ' + match
   }
   if (status === 'SCHEDULED') {
     // Return date and venue
@@ -106,7 +106,6 @@ function getId (round, match = false, year, cb) {
     match = ''
   }
   // If it's not a year or a year in the future, set it to the current year.
-  // TODO: Allow further in the future if we can assume the schedule is released.
   year = (!moment(year, 'YYYY', true).isValid() ? moment().year() : year)
   year = (moment(year, 'YYYY', true).isAfter(moment()) ? moment().year() : year)
   result.type = (moment(year, 'YYYY', true).isAfter(moment()) ? moment().year() : year)
@@ -117,6 +116,11 @@ function getId (round, match = false, year, cb) {
   cb(result)
 }
 
+/**
+ * Fetch a round from the AFL api
+ * @param  {number}   round The round number to fetch, if false the latest will be fetched.
+ * @param  {Function} cb
+ */
 function getRound (round, cb) {
   // Make sure we have a token
   getToken((err) => {
@@ -129,8 +133,6 @@ function getRound (round, cb) {
       url: requestUrl,
       headers: {'x-media-mis-token': aflToken}
     }
-    console.log(requestOptions)
-    console.log(round)
     request(requestOptions, function (error, response, body) {
       if (error) throw new Error(error)
       if (response.statusCode === 200) {
@@ -140,10 +142,8 @@ function getRound (round, cb) {
         currentRound.matches = json.items.length
         currentRound.number = parseInt(json.roundId.slice(-2), 10)
         currentRound.items = json.items
-      console.log('hello')
         cb(false, response, currentRound)
       } else {
-      console.log('oh no', response.statusCode)
         cb({statusCode: response.statusCode, statusMessage: response.statusMessage}, response)
       }
     })
@@ -200,7 +200,6 @@ module.exports = (robot) => {
   robot.hear(/(show me)?\s?(afl round)\s([0-9]{1,2})\s?([0-9]{4})?/i, (res) => {
     var roundNumber = res.match[3].replace(/\?/g, '')
     var roundYear = (typeof res.match[4] !== 'undefined' ? res.match[4] : moment().format('YYYY'))
-    console.log(roundYear)
     getId(roundNumber, false, roundYear, function (round) {
       getRound(round.id, (err, resp, round) => {
         if (err) throw new Error(err)
