@@ -117,14 +117,21 @@ function getId (round, match = false, year, cb) {
   cb(result)
 }
 
-function getCurrentRound (cb) {
-  getToken((err, token) => {
+function getRound (round, cb) {
+  // Make sure we have a token
+  getToken((err) => {
     if (err) throw new Error(err)
-    var optionsRoundCurrent = {
-      url: 'http://api.afl.com.au/cfs/afl/matchItems',
+    // Do we want to return a specific match or the latest one?
+    // If an `id` is supplied, let's return a specific round.
+    var requestUrl = 'http://api.afl.com.au/cfs/afl/matchItems'
+    requestUrl += (round ? '/round/' + round : '')
+    var requestOptions = {
+      url: requestUrl,
       headers: {'x-media-mis-token': aflToken}
     }
-    request(optionsRoundCurrent, function (error, response, body) {
+    console.log(requestOptions)
+    console.log(round)
+    request(requestOptions, function (error, response, body) {
       if (error) throw new Error(error)
       if (response.statusCode === 200) {
         var currentRound = {}
@@ -133,8 +140,10 @@ function getCurrentRound (cb) {
         currentRound.matches = json.items.length
         currentRound.number = parseInt(json.roundId.slice(-2), 10)
         currentRound.items = json.items
+      console.log('hello')
         cb(false, response, currentRound)
       } else {
+      console.log('oh no', response.statusCode)
         cb({statusCode: response.statusCode, statusMessage: response.statusMessage}, response)
       }
     })
@@ -172,7 +181,7 @@ module.exports = (robot) => {
     res.send(message)
   })
   robot.hear(/(show me the)?\s?(current)\s?(afl)\s?\s?(round)?/i, (res) => {
-    getCurrentRound((err, resp, round) => {
+    getRound(false, (err, resp, round) => {
       round.year = moment().format('YYYY')
       if (err) throw new Error(err)
       if (resp.statusCode === 200) {
@@ -190,31 +199,23 @@ module.exports = (robot) => {
   })
   robot.hear(/(show me)?\s?(afl round)\s([0-9]{1,2})\s?([0-9]{4})?/i, (res) => {
     var roundNumber = res.match[3].replace(/\?/g, '')
-    var year = (typeof res.match[4] !== 'undefined' ? res.match[4] : '')
-    getId(roundNumber, false, year, function (round) {
-      getToken(function (err, token) {
+    var roundYear = (typeof res.match[4] !== 'undefined' ? res.match[4] : moment().format('YYYY'))
+    console.log(roundYear)
+    getId(roundNumber, false, roundYear, function (round) {
+      getRound(round.id, (err, resp, round) => {
         if (err) throw new Error(err)
-        var optionsRound = {
-          url: 'http://api.afl.com.au/cfs/afl/matchItems/round/' + round.id,
-          headers: {'x-media-mis-token': aflToken}
+        if (resp.statusCode === 200) {
+          round.year = roundYear
+          printRound(round, (error, message) => {
+            if (error) throw new Error(error)
+            res.send(message)
+          })
+        } else if (resp.statusCode === 404) {
+          res.send('You probably did something wrong (' + resp.statusCode + ' ' + resp.statusMessage + ')')
+        } else {
+          res.send('We probably did something wrong (' + resp.statusCode + ')')
+          console.warn(round)
         }
-        request(optionsRound, function (error, response, body) {
-          var json = JSON.parse(body)
-          json.number = roundNumber
-          json.year = round.year
-          if (error) throw new Error(error)
-          if (response.statusCode === 200) {
-            printRound(json, (error, message) => {
-              if (error) throw new Error(error)
-              res.send(message)
-            })
-          } else if (response.statusCode === 404) {
-            res.send('You probably did something wrong (' + response.statusCode + ' ' + response.statusMessage + ')')
-          } else {
-            res.send('We probably did something wrong (' + response.statusCode + ')')
-            console.warn(body)
-          }
-        })
       })
     })
   })
