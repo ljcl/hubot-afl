@@ -183,17 +183,18 @@ module.exports = (robot) => {
   robot.hear(/(show me the)?\s?(current)\s?(afl)\s?\s?(round)?/i, (res) => {
     getRound(false, (err, resp, round) => {
       round.year = moment().format('YYYY')
-      if (err) throw new Error(err)
+      if (err) { robot.logger.error(err) }
       if (resp.statusCode === 200) {
         printRound(round, (error, message) => {
-          if (error) throw new Error(error)
+          if (error) { robot.logger.error(error) }
           res.send(message)
         })
       } else if (resp.statusCode === 404) {
+        robot.logger.warning(res)
         res.send('You probably did something wrong (' + resp.statusCode + ' ' + resp.statusMessage + ')')
       } else {
+        robot.logger.warning(res)
         res.send('We probably did something wrong (' + resp.statusCode + ')')
-        console.warn(round)
       }
     })
   })
@@ -202,11 +203,11 @@ module.exports = (robot) => {
     var roundYear = (typeof res.match[4] !== 'undefined' ? res.match[4] : moment().format('YYYY'))
     getId(roundNumber, false, roundYear, function (round) {
       getRound(round.id, (err, resp, round) => {
-        if (err) throw new Error(err)
+        if (err) { robot.logger.error(err) }
         if (resp.statusCode === 200) {
           round.year = roundYear
           printRound(round, (error, message) => {
-            if (error) throw new Error(error)
+            if (error) { robot.logger.error(error) }
             res.send(message)
           })
         } else if (resp.statusCode === 404) {
