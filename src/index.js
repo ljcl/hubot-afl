@@ -17,6 +17,7 @@ function getToken (cb) {
   if (typeof tokenRetrieved !== 'undefined') {
     // There is a token, check date
     if (tokenRetrieved.isSameOrAfter(tokenRefresh, 'hour')) {
+      console.info('[hubot-afl] token is old!', tokenRetrieved)
       // Get a new token
       newToken(function (err, token) {
         if (err) throw new Error(err)
@@ -24,9 +25,11 @@ function getToken (cb) {
         cb(false, aflToken)
       })
     } else {
+      console.info('[hubot-afl] checking for token, didn\'t need one', tokenRetrieved)
       cb(false, aflToken)
     }
   } else {
+    console.info('[hubot-afl] getting new token, couldn\'t find a previous one.')
     newToken(function (err, token) {
       if (err) throw new Error(err)
       aflToken = token
@@ -42,6 +45,8 @@ function getToken (cb) {
 function newToken (cb) {
   tokenRetrieved = moment()
   tokenRefresh = moment().add(6, 'hours')
+  console.info('[hubot-afl] getting a new token', tokenRetrieved)
+  console.info('[hubot-afl] setting refresh to ', tokenRefresh)
   request({method: 'POST', url: 'http://api.afl.com.au/cfs/afl/WMCTok'}, function (error, response, body) {
     if (error) throw new Error(error)
     var data = JSON.parse(body)
