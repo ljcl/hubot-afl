@@ -5,6 +5,7 @@ var moment = require('moment-timezone')
 var leftpad = require('left-pad')
 var _ = require('lodash')
 
+var formatString = 'dddd, MMMM Do YYYY, h:mm:ss a'
 var tokenRetrieved
 var tokenRefresh
 var aflToken
@@ -17,7 +18,7 @@ function getToken (cb) {
   if (typeof tokenRetrieved !== 'undefined') {
     // There is a token, check date
     if (tokenRetrieved.isSameOrAfter(tokenRefresh, 'hour')) {
-      console.info('[hubot-afl] token is old!', tokenRetrieved)
+      console.info('[hubot-afl] token is old!', tokenRetrieved.format(formatString))
       // Get a new token
       newToken(function (err, token) {
         if (err) throw new Error(err)
@@ -25,7 +26,7 @@ function getToken (cb) {
         cb(false, aflToken)
       })
     } else {
-      console.info('[hubot-afl] checking for token, didn\'t need one', tokenRetrieved)
+      console.info('[hubot-afl] checking for token, didn\'t need one', tokenRetrieved.format(formatString))
       cb(false, aflToken)
     }
   } else {
@@ -45,8 +46,8 @@ function getToken (cb) {
 function newToken (cb) {
   tokenRetrieved = moment()
   tokenRefresh = moment().add(6, 'hours')
-  console.info('[hubot-afl] getting a new token', tokenRetrieved)
-  console.info('[hubot-afl] setting refresh to ', tokenRefresh)
+  console.info('[hubot-afl] getting a new token', tokenRetrieved.format(formatString))
+  console.info('[hubot-afl] setting refresh to ', tokenRefresh.format(formatString))
   request({method: 'POST', url: 'http://api.afl.com.au/cfs/afl/WMCTok'}, function (error, response, body) {
     if (error) throw new Error(error)
     var data = JSON.parse(body)
