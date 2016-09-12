@@ -4,6 +4,5 @@ src
 test
 tmp
 .travis.yml
-webpack.config.js
 .gitignore
 coverage
