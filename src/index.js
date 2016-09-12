@@ -3,7 +3,6 @@
 var request = require('request')
 var moment = require('moment-timezone')
 var leftpad = require('left-pad')
-var _ = require('lodash')
 
 var formatString = 'dddd, MMMM Do YYYY, h:mm:ss a'
 var tokenRetrieved
@@ -166,7 +165,7 @@ function printRound (round, cb) {
   var count = 0
   var total = round.items.length
   var message = 'AFL round ' + round.number + ' (' + round.year + ')\n'
-  _.forEach(round.items, function (match) {
+  round.items.forEach(function (match) {
     formatMatch(match, function (err, result) {
       if (err) throw err
       message += result
