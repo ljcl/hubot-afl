@@ -1,87 +1,45 @@
 'use strict'
 
-var Robot = require('hubot/src/robot')
-var TextMessage = require('hubot/src/message').TextMessage
-var expect = require('chai').expect
+const Helper = require('hubot-test-helper')
+const expect = require('chai').expect
+const http = require('http')
 
-var moment = require('moment-timezone')
+const helper = new Helper('../src/index.js')
 
-describe('hubot', function () {
-  var robot
-  var user
+describe('hubot', () => {
+  let room
 
-  beforeEach(() => {
-    // create new robot, without http, using the mock adapter
-    robot = new Robot(null, 'mock-adapter', false, 'Hubot')
+  beforeEach(() => room = helper.createRoom())
+  afterEach(() => room.destroy())
 
-    // configure user
-    user = robot.brain.userForId('1', {
-      name: 'mocha',
-      room: '#mocha'
-    })
-
-    robot.adapter.on('connected', () => {
-      // load the module under test and configure it for the
-      // robot.  This is in place of external-scripts
-      require('../src/index')(robot)
-    })
-
-    robot.run()
-  })
-
-  afterEach(() => {
-    robot.shutdown()
-  })
-
-  it('Return information about the current AFL Round', (done) => {
-    robot.adapter.on('send', (envelope, strings) => {
-      expect(strings[0]).to.match(/AFL round/i)
+  it('should respond when asked about afl', done => {
+    room.user.say('alice', 'hubot afl').then(() => {
+      expect(room.messages).to.eql([
+        ['alice', 'hubot afl'],
+        ['hubot', `I can help you out with afl scores:
+"afl current round" - Get fixtures/ scores of the latest round.
+"afl round 27 2012" - Show fixtures for a specific round (year optional)`]
+      ])
       done()
     })
-    // Send a message to Hubot
-    robot.adapter.receive(new TextMessage(user, 'show me the current afl round'))
   })
 
-  it('Return information about an AFL season from the current year', (done) => {
-    robot.adapter.on('send', (envelope, strings) => {
-      expect(strings[0]).to.match(/AFL round/i)
+//   it('should return specific round information', done => {
+//     room.user.say('alice', 'hubot afl round 25 2015').then(() => {
+//       expect(room.messages).to.eql([
+//         ['alice', 'hubot afl round 25 2015'],
+//         ['hubot', `AFL round 25 (2015)
+// *Hawthorn (135)* - Adelaide Crows (61)
+// *North Melbourne (77)* - Sydney Swans (51)`]
+//       ])
+//       done()
+//     })
+//   })
+
+  it('should return the current round information', done => {
+    room.user.say('alice', 'hubot afl current round').then(() => {
+      expect(room.messages).to.match(/^AFL Round/)
       done()
     })
-    // Send a message to Hubot
-    robot.adapter.receive(new TextMessage(user, 'show me afl round 5'))
-  })
-
-  it('Return information about an AFL season from last year', (done) => {
-    var lastYear = moment().subtract(1, 'years').format('Y')
-
-    robot.adapter.on('send', (envelope, strings) => {
-      expect(strings[0]).to.match(/AFL round/i)
-      done()
-    })
-
-    // Send a message to Hubot
-    robot.adapter.receive(new TextMessage(user, 'show me afl round 5 ' + lastYear))
-  })
-
-  it('Return the current year if AFL season query is too far in the future', (done) => {
-    var nextYear = moment().add(1, 'years').format('Y')
-
-    robot.adapter.on('send', (envelope, strings) => {
-      expect(strings[0]).to.match(/AFL round/i)
-      done()
-    })
-
-    // Send a message to Hubot
-    robot.adapter.receive(new TextMessage(user, 'show me afl round 1' + nextYear))
-  })
-
-  it('Retrieve information about the api token', (done) => {
-    robot.adapter.on('send', (envelope, strings) => {
-      expect(strings[0]).to.match(/AFL API Token/i)
-      done()
-    })
-
-    // Send a message to Hubot
-    robot.adapter.receive(new TextMessage(user, 'afl token'))
   })
 })
