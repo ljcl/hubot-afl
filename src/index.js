@@ -1,3 +1,17 @@
+// Description:
+//   Gets information about AFL rounds
+//
+// Dependencies:
+//   "left-pad": "^1.0.2"
+//   "moment-timezone": "^0.5.3"
+//   "request": "^2.72.0"
+//
+// Commands:
+//   hubot afl current round - Get fixtures/ scores of the latest round.
+//   hubot afl round 27 2012 - Show fixtures for a specific round (year optional)
+//
+// Author
+//   ljcl <luke@lukeclark.com.au>
 'use strict'
 
 var request = require('request')
