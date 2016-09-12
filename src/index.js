@@ -16,8 +16,9 @@ var aflToken
  */
 function getToken (cb) {
   if (typeof tokenRetrieved !== 'undefined') {
+    var timeNow = moment()
     // There is a token, check date
-    if (tokenRetrieved.isSameOrAfter(tokenRefresh, 'hour')) {
+    if (timeNow.isSameOrAfter(tokenRefresh, 'hour')) {
       console.info('[hubot-afl] token is old!', tokenRetrieved.format(formatString))
       // Get a new token
       newToken(function (err, token) {
