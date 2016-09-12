@@ -181,7 +181,7 @@ function printRound (round, cb) {
 }
 
 module.exports = (robot) => {
-  robot.hear(/afl$/i, (res) => {
+  robot.respond(/afl$/i, (res) => {
     var message = `I can help you out with afl scores:
 "show me the current afl round" - Get fixtures/ scores of the latest round.
 "show me afl round 27 2012" - Show fixtures for a specific round (year optional)`
@@ -205,8 +205,8 @@ module.exports = (robot) => {
       }
     })
   })
-  robot.hear(/(show me)?\s?(afl round)\s([0-9]{1,2})\s?([0-9]{4})?/i, (res) => {
-    var roundNumber = res.match[3].replace(/\?/g, '')
+  robot.respond(/(show me)?\s?(afl round)\s([0-9]{1,2})\s?([0-9]{4})?/i, (res) => {g
+    var roundNumber = res.match[3].replace(/\?/g, '') || false
     var roundYear = (typeof res.match[4] !== 'undefined' ? res.match[4] : moment().format('YYYY'))
     getId(roundNumber, false, roundYear, function (round) {
       getRound(round.id, (err, resp, round) => {
@@ -227,7 +227,7 @@ module.exports = (robot) => {
     })
   })
   // Check our afl token and it's age (debug)
-  robot.hear(/(afl token)/i, (res) => {
+  robot.respond(/(afl token)/i, (res) => {
     getToken(function (err, token) {
       if (err) throw new Error(err)
       var debugString = 'AFL API Token ' + aflToken + ': \n'
