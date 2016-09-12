@@ -182,11 +182,11 @@ function printRound (round, cb) {
 module.exports = (robot) => {
   robot.respond(/afl$/i, (res) => {
     var message = `I can help you out with afl scores:
-"show me the current afl round" - Get fixtures/ scores of the latest round.
-"show me afl round 27 2012" - Show fixtures for a specific round (year optional)`
+"afl current round" - Get fixtures/ scores of the latest round.
+"afl round 27 2012" - Show fixtures for a specific round (year optional)`
     res.send(message)
   })
-  robot.hear(/(show me the)?\s?(current)\s?(afl)\s?\s?(round)?/i, (res) => {
+  robot.hear(/(show me the)?\s?(afl current)\s?\s?(round)?/i, (res) => {
     getRound(false, (err, resp, round) => {
       round.year = moment().format('YYYY')
       if (err) { robot.logger.error(err) }
@@ -204,7 +204,7 @@ module.exports = (robot) => {
       }
     })
   })
-  robot.respond(/(show me)?\s?(afl round)\s([0-9]{1,2})\s?([0-9]{4})?/i, (res) => {g
+  robot.respond(/(show me)?\s?(afl round)\s([0-9]{1,2})\s?([0-9]{4})?/i, (res) => {
     var roundNumber = res.match[3].replace(/\?/g, '') || false
     var roundYear = (typeof res.match[4] !== 'undefined' ? res.match[4] : moment().format('YYYY'))
     getId(roundNumber, false, roundYear, function (round) {
