@@ -14,8 +14,8 @@ module.exports = (robot) => {
   });
   const regexRound = /(afl scores|afl fixture|afl round)\s?([0-9]{1,2})?\s?([0-9]{4})?/i;
   robot.respond(regexRound, (res) => {
-    const roundNumber = res.match[1] || false;
-    const roundYear = typeof res.match[2] !== 'undefined' ? res.match[2] : moment().format('YYYY');
+    const roundNumber = res.match[2] || false;
+    const roundYear = typeof res.match[3] !== 'undefined' ? res.match[3] : moment().format('YYYY');
     getId(roundNumber, false, roundYear).then((result) => {
       getRound(result)
         .then((resp) => {
