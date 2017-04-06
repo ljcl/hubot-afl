@@ -1,0 +1,9 @@
+{
+  "code": "CFSAPI001",
+  "techMessage": "Invalid round id CD_R2017014013",
+  "userMessage": "Your request could not be processed due to a technical problem. Code: CFSAPI001",
+  "host": "ip-10-3-45-5",
+  "date": "2017-04-03T12:02:21.615+0000",
+  "version": "4.0.67",
+  "mdc": "@9190@"
+}

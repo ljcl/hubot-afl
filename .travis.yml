@@ -1,8 +1,8 @@
 language: node_js
 node_js:
-  - v6
-  - v5
-  - v4
+  - "7"
+  - "6"
+  - "5"
 env:
   - CXX=g++-4.8
 script:
