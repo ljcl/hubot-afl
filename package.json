@@ -10,7 +10,8 @@
   },
   "repository": "https://github.com/ljcl/hubot-afl.git",
   "keywords": [
-    "hubot-script"
+    "hubot-script",
+    "afl"
   ],
   "scripts": {
     "build": "npm run clean && babel src -d dist --ignore **/*.spec.js,__mocks__",
