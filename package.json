@@ -18,6 +18,7 @@
     "build": "npm run clean && babel src -d dist --ignore **/*.spec.js,__mocks__",
     "watch": "babel src --watch -d dist --ignore **/*.spec.js,__mocks__",
     "prepublish": "npm run build",
+    "clean": "del dist",
     "lint": "eslint src/**/*.js",
   },
   "devDependencies": {
