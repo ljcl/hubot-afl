@@ -1,0 +1,9 @@
+Description:
+  Gets information about AFL rounds
+
+Commands:
+  hubot afl fixture - Get fixtures/ scores of the latest round.
+  hubot afl round 27 2012 - Show fixtures for a specific round (year optional).
+
+Author
+  ljcl <luke@lukeclark.com.au>
