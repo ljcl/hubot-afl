@@ -6,9 +6,10 @@ describe('getId', () => {
   test('Returns an ID for the second match of round two, 2013', () => {
     return printRound(getRoundResult)
       .then((message) => {
-        console.log('todo', message)
+        // TODO
+        // console.log('todo', message)
       }).catch((e) => {
-        console.log('todo', e)
+        // console.log('todo', e)
       });
   });
 });

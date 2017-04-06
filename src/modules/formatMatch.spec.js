@@ -6,7 +6,8 @@ describe('getId', () => {
   test('Test formatting for a scheduled match', () => {
     const singleRound = getRoundResult.items[0];
     formatMatch(singleRound, (err, res) => {
-      console.log(res);
+      // TODO
+      // console.log(res);
       // console.log(err);
       // console.log(message);
     });
