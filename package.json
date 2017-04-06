@@ -6,35 +6,40 @@
   "license": "MIT",
   "author": {
     "name": "Luke Clark",
-    "email": "contact@lukejclark.com"
+    "email": "luke@lukeclark.com.au"
   },
   "repository": "https://github.com/ljcl/hubot-afl.git",
   "keywords": [
-    "hubot-script"
+    "hubot-script",
+    "afl"
   ],
   "scripts": {
-    "build": "babel src -d dist",
-    "watch": "babel src --watch -d dist",
-    "prepublish": "babel src -d dist",
-    "test": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec --compilers js:babel-core/register",
-    "coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "build": "npm run clean && babel src -d dist --ignore **/*.spec.js,__mocks__",
+    "watch": "babel src --watch -d dist --ignore **/*.spec.js,__mocks__",
+    "prepublish": "npm run build",
+    "clean": "del dist",
+    "lint": "eslint src/**/*.js",
+    "docs": "jsdoc src/**/*.js -d docs",
+    "test": "jest --coverage"
   },
   "devDependencies": {
     "babel-cli": "^6.14.0",
-    "babel-core": "^6.7.7",
-    "babel-loader": "^6.2.0",
+    "babel-core": "^6.24.0",
+    "babel-jest": "^19.0.0",
+    "babel-plugin-add-header-comment": "^1.0.3",
     "babel-preset-es2015": "^6.1.18",
-    "chai": "^3.4.1",
-    "coffee-script": "^1.11.1",
-    "coveralls": "^2.11.6",
-    "hubot": "^2.17.0",
-    "hubot-test-helper": "^1.4.4",
-    "istanbul": "^1.0.0-alpha.2",
-    "mocha": "^2.3.4"
+    "del-cli": "^0.2.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.1.3",
+    "eslint-loader": "^1.7.1",
+    "eslint-plugin-import": "^2.2.0",
+    "fetch-mock": "^5.9.4",
+    "jest": "^19.0.2",
+    "jsdoc": "^3.4.3"
   },
   "dependencies": {
+    "isomorphic-fetch": "^2.2.1",
     "left-pad": "^1.0.2",
-    "moment-timezone": "^0.5.3",
-    "request": "^2.72.0"
+    "moment-timezone": "^0.5.13"
   }
 }
