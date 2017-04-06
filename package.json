@@ -20,6 +20,7 @@
     "prepublish": "npm run build",
     "clean": "del dist",
     "lint": "eslint src/**/*.js",
+    "docs": "jsdoc src/**/*.js -d docs",
   },
   "devDependencies": {
     "babel-cli": "^6.14.0",
@@ -38,6 +39,7 @@
     "eslint-loader": "^1.7.1",
     "eslint-plugin-import": "^2.2.0",
     "eslint": "^3.19.0",
+    "jsdoc": "^3.4.3"
   },
   "dependencies": {
     "left-pad": "^1.0.2",
