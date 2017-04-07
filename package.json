@@ -1,6 +1,6 @@
 {
   "name": "hubot-afl",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Get AFL scores from your hubot",
   "main": "dist/index.js",
   "license": "MIT",
@@ -21,7 +21,7 @@
     "lint": "eslint src/**/*.js",
     "docs": "jsdoc src/**/*.js -d docs",
     "test": "jest --coverage",
-    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "devDependencies": {
     "babel-cli": "^6.14.0",
